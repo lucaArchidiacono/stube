@@ -8,7 +8,7 @@ Planning lives in GitHub issues (`gh issue list`), never in the repo. Don't add 
 
 Rails 8.1, SQLite, Hotwire (Turbo, Stimulus), Tailwind and importmap. Solid Queue, Solid Cache and Solid Cable, so no Redis and no Node. Minitest with system tests. `bin/ci` runs style, security checks and every test. The Docker image is the Dockerfile `rails new` generates. The iOS and iPadOS app will be a Hotwire Native shell in `ios/`.
 
-The same image runs three ways: self-hosted (one container, zero config), on Stube Cloud (we run one instance per household) and with Stube Connect (remote access, push and backups for self-hosters).
+The same image runs two ways: self-hosted (one container, zero config) and on Stube Cloud, where we deploy, update and back up one instance per household.
 
 ## How it works
 
@@ -32,6 +32,6 @@ The same image runs three ways: self-hosted (one container, zero config), on Stu
 - No accounts: people never sign up or log in. An invite is the only way into a household. Paying for Stube Cloud happens outside the app.
 - Money is integer cents in the household's currency.
 - Zero config: the container runs with no environment variables, and all data lives in `storage/`. Outside services (S3, AI) are optional and set by environment variables.
-- Self-hosting never depends on a service we run. Stube Cloud and Connect run the same image: no cloud-only code in the app.
+- Self-hosting never depends on a service we run. Stube Cloud runs the same image, so the app has no cloud-only code. Its tooling goes in `cloud/`, outside the Docker image.
 - Keep the repo clean: code, tests, `README.md`, `LICENSE`, this file and the skills in `.claude/skills/`. Nothing else.
 - Commits and pull requests follow the `commit` and `pr` skills. Check `bin/ci`'s exit code before every commit.
