@@ -1,0 +1,14 @@
+milk:
+  household: ours
+  name: Milk
+  position: 0
+
+eggs:
+  household: ours
+  name: 6 eggs
+  position: 1
+
+bread:
+  household: ours
+  name: Bread
+  position: 2

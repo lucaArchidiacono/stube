@@ -1,0 +1,20 @@
+<%# locals: (shopping_item:) %>
+<%# Rendered for this page and for live updates, so nothing in here depends on who's looking. %>
+<li id="<%= dom_id(shopping_item) %>" data-controller="inline-edit" data-position-url="<%= shopping_item_position_path(shopping_item) %>"
+    class="flex min-h-12 items-center gap-1 border-b border-stone-100 bg-white pr-3 has-[form[aria-busy]]:opacity-40 dark:border-stone-800/70 dark:bg-stone-950">
+  <%= button_to shopping_item_check_off_path(shopping_item), "aria-label": "Check off #{shopping_item.name}", form: { class: "shrink-0" },
+        class: "group/check flex size-12 cursor-pointer items-center justify-center disabled:opacity-40" do %>
+    <span class="size-5 rounded-full border-2 border-stone-300 transition group-hover/check:border-accent-500 group-active/check:bg-accent-100 dark:border-stone-600"></span>
+  <% end %>
+
+  <span class="min-w-0 flex-1 cursor-text py-3 break-words" data-inline-edit-target="text" data-action="click->inline-edit#edit"><%= shopping_item.name %></span>
+
+  <%= form_with url: shopping_item_path(shopping_item), method: :patch, html: { hidden: true }, class: "min-w-0 flex-1",
+        data: { inline_edit_target: "form", action: "submit->inline-edit#submit" } do %>
+    <%= text_field_tag :name, shopping_item.name, maxlength: 100, autocomplete: "off", "aria-label": "Item", class: "input h-10 px-2",
+          data: { inline_edit_target: "input", action: "keydown.esc->inline-edit#cancel blur->inline-edit#blur" } %>
+  <% end %>
+
+  <%= button_to "Delete", shopping_item_path(shopping_item), method: :delete, form: { hidden: true, data: { inline_edit_target: "delete" } },
+        data: { action: "pointerdown->inline-edit#deleting" }, class: "link-danger h-10" %>
+</li>

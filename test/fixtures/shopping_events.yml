@@ -1,0 +1,37 @@
+# The history is ordered by id, which grows with time. Fixture ids are hashes
+# unless given, so these are set oldest first. Times are fixed hours in the
+# household's time zone, so "today" stays today whenever the tests run.
+<% today = Time.find_zone("Europe/Zurich").now.beginning_of_day %>
+
+milk_checked_off_yesterday:
+  id: 1
+  household: ours
+  action: checked_off
+  item_name: Milk
+  by_name: Luca
+  created_at: <%= (today - 12.hours).utc.to_fs(:db) %>
+
+chips_deleted:
+  id: 2
+  household: ours
+  action: deleted
+  item_name: Chips
+  by_name: Kitchen iPad
+  created_at: <%= (today + 8.hours).utc.to_fs(:db) %>
+
+eggs_renamed:
+  id: 3
+  household: ours
+  action: renamed
+  item_name: 6 eggs
+  old_item_name: 2 eggs
+  by_name: Luca
+  created_at: <%= (today + 9.hours).utc.to_fs(:db) %>
+
+butter_checked_off:
+  id: 4
+  household: ours
+  action: checked_off
+  item_name: Butter
+  by_name: Anna
+  created_at: <%= (today + 10.hours).utc.to_fs(:db) %>

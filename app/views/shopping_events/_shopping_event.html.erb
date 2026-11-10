@@ -1,0 +1,12 @@
+<%# locals: (shopping_event:, put_back: shopping_event.put_back_possible?) %>
+<li id="<%= dom_id(shopping_event) %>" class="flex items-start gap-3 px-4 py-3">
+  <%= avatar shopping_event.by_name, size: :sm %>
+  <div class="min-w-0 flex-1 text-sm">
+    <p class="break-words"><%= shopping_event_sentence(shopping_event) %></p>
+    <p class="muted"><%= shopping_event.time.strftime("%H:%M") %></p>
+  </div>
+  <% if put_back %>
+    <%= button_to "Put back", shopping_event_put_back_path(shopping_event), form: { class: "shrink-0" },
+          class: "-my-1 h-9 cursor-pointer rounded-md px-2 text-sm font-medium text-accent-600 hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-950" %>
+  <% end %>
+</li>

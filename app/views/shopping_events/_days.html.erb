@@ -1,0 +1,28 @@
+<%# locals: (events:, names_on_list:, with_today: false) %>
+<%# Grouped by day in the household's time zone. New entries arrive live at the top of Today. %>
+<% heading = "sticky top-0 bg-white/95 px-4 pt-4 pb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase backdrop-blur dark:bg-stone-950/95 dark:text-stone-400" %>
+<% today = Current.household.today %>
+<% days = events.group_by(&:day) %>
+<% put_back = ->(event) { (event.checked_off? || event.deleted?) && names_on_list.exclude?(event.item_name.downcase) } %>
+
+<% if with_today %>
+  <section class="[&:not(:has(li))]:hidden">
+    <h3 class="<%= heading %>">Today</h3>
+    <ul id="shopping_history_today">
+      <% days.delete(today)&.each do |event| %>
+        <%= render "shopping_events/shopping_event", shopping_event: event, put_back: put_back.(event) %>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
+<% days.each do |day, day_events| %>
+  <section>
+    <h3 class="<%= heading %>"><%= history_day(day, today) %></h3>
+    <ul>
+      <% day_events.each do |event| %>
+        <%= render "shopping_events/shopping_event", shopping_event: event, put_back: put_back.(event) %>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

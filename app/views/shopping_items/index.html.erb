@@ -1,0 +1,33 @@
+<% content_for :title, "Shopping · Stube" %>
+<%= turbo_stream_from Current.household, :shopping %>
+
+<div class="relative flex min-h-0 flex-1">
+  <section class="flex min-w-0 flex-1 flex-col" aria-label="Shopping list">
+    <%= render "shared/header", title: "Shopping",
+          trailing: safe_join([
+            tag.span(@shopping_items.size, id: "shopping_count", class: "muted", "aria-label": "Items on the list"),
+            link_to(shopping_history_path, class: "flex h-11 items-center gap-1 text-accent-600 lg:hidden dark:text-accent-400") { safe_join([ icon(:history, "size-5"), "History" ]) }
+          ]) %>
+
+    <div class="group/list min-h-0 flex-1 overflow-y-auto">
+      <ul id="shopping_items" data-controller="sortable">
+        <%= render @shopping_items %>
+      </ul>
+      <p class="px-4 py-6 muted group-has-[li]/list:hidden">Nothing on the list.</p>
+
+      <div class="sticky bottom-0 bg-white/95 p-3 backdrop-blur dark:bg-stone-950/95">
+        <%= render "shopping_items/add_form", autofocus: true %>
+      </div>
+    </div>
+  </section>
+
+  <%# Desktop shows the history next to the list. Hidden frames never load, so phones don't fetch it. %>
+  <aside class="hidden w-80 shrink-0 flex-col border-l border-stone-200 lg:flex xl:w-96 dark:border-stone-800" aria-label="History">
+    <%= render "shared/header", title: "History" %>
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      <%= turbo_frame_tag "shopping_history", src: shopping_history_path, loading: :lazy %>
+    </div>
+  </aside>
+
+  <div id="shopping_undo" class="pointer-events-none absolute inset-x-0 bottom-20 z-10 flex justify-center px-4"></div>
+</div>

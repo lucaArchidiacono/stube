@@ -1,0 +1,20 @@
+# Raw codes: open AAAA-BBBB, expired CCCC-DDDD, anna_link EEEE-FFFF.
+
+open:
+  household: ours
+  created_by: luca
+  code_digest: <%= Code.digest("AAAA-BBBB") %>
+  expires_at: <%= 1.day.from_now.to_fs(:db) %>
+
+expired:
+  household: ours
+  created_by: luca
+  code_digest: <%= Code.digest("CCCC-DDDD") %>
+  expires_at: <%= 1.hour.ago.to_fs(:db) %>
+
+anna_link:
+  household: ours
+  member: anna
+  created_by: anna
+  code_digest: <%= Code.digest("EEEE-FFFF") %>
+  expires_at: <%= 10.minutes.from_now.to_fs(:db) %>

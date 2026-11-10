@@ -1,0 +1,8 @@
+<%# locals: (events:) %>
+<%# A full page means there may be more. The link loads the next page into this frame. %>
+<% if events.size == ShoppingEvent::PAGE %>
+  <%= turbo_frame_tag "shopping_history_before_#{events.last.id}" do %>
+    <%= link_to "Show earlier", shopping_history_path(before: events.last.id),
+          class: "mx-4 my-3 flex h-11 items-center justify-center rounded-lg text-sm font-medium text-accent-600 hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-950" %>
+  <% end %>
+<% end %>

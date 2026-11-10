@@ -1,0 +1,26 @@
+<% content_for :title, "Set up Stube" %>
+
+<h1 class="text-2xl font-semibold">Welcome to Stube</h1>
+<p class="mt-2 text-stone-600 dark:text-stone-400">Create your household. You'll invite the others next.</p>
+
+<%= form_with url: setup_path, class: "mt-6 space-y-4" do |form| %>
+  <%= hidden_field_tag :time_zone, nil, data: { controller: "time-zone" } %>
+
+  <label class="block">
+    <span class="text-sm font-medium">Setup code</span>
+    <span class="block muted">It's in the server log.</span>
+    <%= text_field_tag :code, params[:code], required: true, autocomplete: "off", autocapitalize: "characters", placeholder: "XXXX-XXXX", class: "input mt-1" %>
+  </label>
+
+  <label class="block">
+    <span class="text-sm font-medium">Your name</span>
+    <%= text_field_tag :name, params[:name], required: true, maxlength: 50, autocomplete: "given-name", class: "input mt-1" %>
+  </label>
+
+  <label class="block">
+    <span class="text-sm font-medium">Household name</span>
+    <%= text_field_tag :household_name, params[:household_name], required: true, maxlength: 50, placeholder: "Our home", class: "input mt-1" %>
+  </label>
+
+  <%= form.button "Create household", class: "button w-full" %>
+<% end %>

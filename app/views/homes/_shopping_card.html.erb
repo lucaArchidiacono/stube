@@ -1,0 +1,23 @@
+<%# locals: (household:) %>
+<%# Replaced live whenever the list changes. The add field sits outside, so typing isn't interrupted. %>
+<% items = household.shopping_items.ordered.limit(5).to_a %>
+<% count = household.shopping_items.count %>
+<%= link_to shopping_path, id: "home_shopping_card", class: "block p-4 pb-2" do %>
+  <h2 class="flex items-center gap-2 font-semibold">
+    <%= icon :shopping, "size-5 text-accent-600 dark:text-accent-400" %>
+    Shopping
+    <span class="ml-auto text-sm font-normal text-stone-500 dark:text-stone-400"><%= count %></span>
+  </h2>
+  <% if items.any? %>
+    <ul class="mt-3 space-y-1.5">
+      <% items.each do |item| %>
+        <li class="truncate"><%= item.name %></li>
+      <% end %>
+    </ul>
+    <% if count > items.size %>
+      <p class="mt-1.5 muted">+ <%= count - items.size %> more</p>
+    <% end %>
+  <% else %>
+    <p class="mt-3 muted">Nothing on the list.</p>
+  <% end %>
+<% end %>

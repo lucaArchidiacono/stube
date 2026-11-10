@@ -1,0 +1,70 @@
+<% content_for :title, "Household · Stube" %>
+
+<%= turbo_stream_from Current.household, :settings %>
+<%= render "shared/header", title: "Household" %>
+
+<div class="min-h-0 flex-1 overflow-y-auto">
+  <div class="mx-auto max-w-2xl pb-10">
+    <h2 class="section-heading">Name</h2>
+    <div class="px-4">
+      <% if Current.member %>
+        <%= form_with url: household_path, method: :patch, class: "flex gap-2" do |form| %>
+          <%= text_field_tag :name, Current.household.name, required: true, maxlength: 50, "aria-label": "Household name", class: "input" %>
+          <%= form.button "Save", class: "button" %>
+        <% end %>
+      <% else %>
+        <p><%= Current.household.name %></p>
+      <% end %>
+    </div>
+
+    <div class="flex items-end justify-between pr-4">
+      <h2 class="section-heading">Members</h2>
+      <% if Current.member %>
+        <%= button_to "Invite someone", invites_path, class: "button-small" %>
+      <% end %>
+    </div>
+    <ul class="divide-y divide-stone-100 dark:divide-stone-800/70">
+      <% @members.each do |member| %>
+        <li>
+          <%= link_to member_path(member), class: "list-row hover:bg-stone-50 dark:hover:bg-stone-900" do %>
+            <%= avatar member.name %>
+            <span class="flex-1 font-medium"><%= member.name %><%= " (you)" if member == Current.member %></span>
+            <span class="muted"><%= pluralize(member.devices.size, "device") %></span>
+            <%= icon :chevron_right, "size-5 text-stone-400" %>
+          <% end %>
+        </li>
+      <% end %>
+      <% @invites.each do |invite| %>
+        <li class="list-row">
+          <span class="flex-1 muted">Open invite · valid until <%= l invite.expires_at, format: "%a %H:%M" %></span>
+          <% if Current.member %>
+            <%= button_to "Revoke", invite_path(invite), method: :delete, class: "link-danger" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if @shared_devices.any? %>
+      <h2 class="section-heading">Shared devices</h2>
+      <ul class="divide-y divide-stone-100 dark:divide-stone-800/70">
+        <% @shared_devices.each do |device| %>
+          <li>
+            <%= link_to device_path(device), class: "list-row hover:bg-stone-50 dark:hover:bg-stone-900" do %>
+              <%= avatar device.name %>
+              <span class="flex-1 font-medium"><%= device.name %><%= " (this device)" if device == Current.device %></span>
+              <span class="muted"><%= last_seen(device) %></span>
+              <%= icon :chevron_right, "size-5 text-stone-400" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if Current.member %>
+      <div class="px-4 pt-10">
+        <%= button_to "Leave household", household_membership_path, method: :delete, class: "button-danger",
+              form: { data: { turbo_confirm: "Leave #{Current.household.name}? Your name and devices are removed." } } %>
+      </div>
+    <% end %>
+  </div>
+</div>

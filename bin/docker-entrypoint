@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+# Generate the secret key on first boot and keep it in the storage volume,
+# so self-hosters never have to set one.
+if [ -z "${SECRET_KEY_BASE}" ]; then
+  key_file=/rails/storage/secret_key_base
+  if [ ! -s "$key_file" ]; then
+    (umask 077 && ruby -rsecurerandom -e 'puts SecureRandom.hex(64)' > "$key_file")
+  fi
+  export SECRET_KEY_BASE="$(cat "$key_file")"
+fi
+
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

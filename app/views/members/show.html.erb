@@ -1,0 +1,48 @@
+<% you = @member == Current.member %>
+<% content_for :title, "#{@member.name} · Stube" %>
+
+<%= turbo_stream_from Current.household, :settings %>
+<%= render "shared/header", title: you ? "You" : @member.name, back: [ "Household", household_path ] %>
+
+<div class="min-h-0 flex-1 overflow-y-auto">
+  <div class="mx-auto max-w-2xl pb-10">
+    <div class="flex flex-col items-center gap-3 px-4 pt-8">
+      <%= avatar @member.name, size: :lg %>
+      <% if you %>
+        <%= form_with url: member_path(@member), method: :patch, class: "flex w-full max-w-xs gap-2" do |form| %>
+          <%= text_field_tag :name, @member.name, required: true, maxlength: 50, "aria-label": "Your name", class: "input" %>
+          <%= form.button "Save", class: "button" %>
+        <% end %>
+      <% else %>
+        <p class="text-xl font-semibold"><%= @member.name %></p>
+      <% end %>
+    </div>
+
+    <div class="flex items-end justify-between pr-4">
+      <h2 class="section-heading">Devices</h2>
+      <% if Current.member %>
+        <%= button_to "Add a device", member_device_links_path(@member), class: "button-small" %>
+      <% end %>
+    </div>
+    <ul class="divide-y divide-stone-100 dark:divide-stone-800/70">
+      <% @devices.each do |device| %>
+        <li>
+          <%= link_to device_path(device), class: "list-row hover:bg-stone-50 dark:hover:bg-stone-900" do %>
+            <div class="flex-1">
+              <p class="font-medium"><%= device.name %><%= " (this device)" if device == Current.device %></p>
+              <p class="muted"><%= last_seen(device).upcase_first %></p>
+            </div>
+            <%= icon :chevron_right, "size-5 text-stone-400" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if Current.member && !you %>
+      <div class="px-4 pt-10">
+        <%= button_to "Remove #{@member.name}", member_path(@member), method: :delete, class: "button-danger",
+              form: { data: { turbo_confirm: "Remove #{@member.name} and all their devices?" } } %>
+      </div>
+    <% end %>
+  </div>
+</div>

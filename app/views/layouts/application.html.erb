@@ -1,0 +1,72 @@
+<%# The app shell: sidebar on desktop, icon rail on tablet, tab bar on phone. %>
+<% sections = [
+     [ :home, "Home", root_path ],
+     [ :shopping, "Shopping", shopping_path ],
+     [ :household, "Household", household_path ]
+   ] %>
+<% current_section = { "homes" => :home, "shopping_items" => :shopping, "shopping_events" => :shopping }.fetch(controller_name, :household) %>
+<% you_path = Current.member ? member_path(Current.member) : device_path(Current.device) %>
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+
+  <body class="h-full bg-white text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100" data-controller="connection">
+    <%# Refreshes this device's pages once it's removed from the household. %>
+    <%= turbo_stream_from Current.device %>
+
+    <div class="flex h-dvh flex-col pt-[env(safe-area-inset-top)] md:flex-row">
+      <nav class="hidden shrink-0 flex-col border-r border-stone-200 bg-stone-50 md:flex md:w-16 lg:w-60 dark:border-stone-800 dark:bg-stone-900" aria-label="Sections">
+        <div class="flex h-14 items-center justify-center px-3 lg:justify-start lg:px-5">
+          <span class="flex size-9 items-center justify-center rounded-lg bg-accent-600 font-semibold text-white lg:hidden" title="<%= Current.household.name %>"><%= initials(Current.household.name).first %></span>
+          <span class="hidden truncate text-lg font-semibold lg:block"><%= Current.household.name %></span>
+        </div>
+
+        <ul class="flex-1 space-y-1 px-2 py-2 lg:px-3">
+          <% sections.each do |key, label, path| %>
+            <li>
+              <%= link_to path, title: label, "aria-current": ("page" if current_section == key),
+                    class: [ "flex h-11 items-center justify-center gap-3 rounded-lg px-3 lg:justify-start",
+                             current_section == key ? "bg-stone-200/70 font-medium text-stone-900 dark:bg-stone-800 dark:text-white"
+                                                    : "text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800/60" ] do %>
+                <%= icon key %>
+                <span class="hidden lg:inline"><%= label %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+
+        <%= link_to you_path, title: Current.device.display_name,
+              class: "m-2 flex items-center justify-center gap-3 rounded-lg p-2 hover:bg-stone-100 lg:m-3 lg:justify-start dark:hover:bg-stone-800/60" do %>
+          <%= avatar Current.device.display_name, size: :sm %>
+          <span class="hidden truncate font-medium lg:inline"><%= Current.device.display_name %></span>
+        <% end %>
+      </nav>
+
+      <div class="relative flex min-h-0 min-w-0 flex-1 flex-col" data-connection-target="content">
+        <div hidden data-connection-target="bar" role="status"
+             class="shrink-0 bg-amber-100 px-4 py-2 text-center text-sm font-medium text-amber-900 dark:bg-amber-900/60 dark:text-amber-100">
+          Offline. Changes can't be saved right now.
+        </div>
+        <%= render "layouts/flash" %>
+        <%= yield %>
+      </div>
+
+      <nav class="shrink-0 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden dark:border-stone-800 dark:bg-stone-950/95" aria-label="Sections">
+        <ul class="grid auto-cols-fr grid-flow-col">
+          <% sections.each do |key, label, path| %>
+            <li>
+              <%= link_to path, "aria-current": ("page" if current_section == key),
+                    class: [ "flex h-16 flex-col items-center justify-center gap-0.5 text-xs",
+                             current_section == key ? "font-medium text-accent-600 dark:text-accent-400" : "text-stone-500 dark:text-stone-400" ] do %>
+                <%= icon key %>
+                <%= label %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>

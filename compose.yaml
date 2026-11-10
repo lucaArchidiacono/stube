@@ -1,0 +1,9 @@
+services:
+  stube:
+    build: .
+    ports: ["8080:80"]
+    volumes: ["storage:/rails/storage"]
+    restart: unless-stopped
+
+volumes:
+  storage:

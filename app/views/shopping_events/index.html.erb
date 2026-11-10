@@ -1,0 +1,26 @@
+<% if params[:before].present? %>
+  <%# An older page, loaded into the "Show earlier" frame. %>
+  <%= turbo_frame_tag "shopping_history_before_#{params[:before]}" do %>
+    <%= render "shopping_events/days", events: @events, names_on_list: @names_on_list %>
+    <%= render "shopping_events/earlier", events: @events %>
+  <% end %>
+<% else %>
+  <% content_for :title, "History · Stube" %>
+  <%= render "shared/header", title: "History", back: [ "Shopping", shopping_path ] %>
+
+  <div class="relative flex min-h-0 flex-1 flex-col">
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      <%# The same frame sits next to the list on desktop. %>
+      <%= turbo_frame_tag "shopping_history" do %>
+        <div class="group/history">
+          <%= turbo_stream_from Current.household, :shopping_history %>
+          <%= render "shopping_events/days", events: @events, names_on_list: @names_on_list, with_today: true %>
+          <p class="px-4 py-6 muted group-has-[li]/history:hidden">Nothing has happened on the list yet.</p>
+          <%= render "shopping_events/earlier", events: @events %>
+        </div>
+      <% end %>
+    </div>
+
+    <div id="shopping_undo" class="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex justify-center px-4"></div>
+  </div>
+<% end %>

@@ -1,0 +1,6 @@
+<%# locals: (autofocus: false) %>
+<%# New items go to the end of the list. The field stays focused for the next one. %>
+<%= form_with url: shopping_items_path, data: { controller: "add-item", add_item_autofocus_value: autofocus, action: "turbo:submit-end->add-item#reset" } do %>
+  <%= text_field_tag :name, nil, placeholder: "Add an item…", required: true, maxlength: 100, autocomplete: "off", "aria-label": "Add an item",
+        class: "input", data: { add_item_target: "input" } %>
+<% end %>

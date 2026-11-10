@@ -1,0 +1,39 @@
+<% content_for :title, "#{@device.name} · Stube" %>
+<% back = @device.member ? [ @device.member == Current.member ? "You" : @device.member.name, member_path(@device.member) ] : [ "Household", household_path ] %>
+
+<%= turbo_stream_from Current.household, :settings %>
+<%= render "shared/header", title: @device.name, back: back %>
+
+<div class="min-h-0 flex-1 overflow-y-auto">
+  <div class="mx-auto max-w-2xl px-4 pb-10">
+    <div class="flex flex-col items-center gap-3 pt-8">
+      <%= avatar @device.display_name, size: :lg %>
+      <% if Current.member %>
+        <%= form_with url: device_path(@device), method: :patch, class: "flex w-full max-w-xs gap-2" do |form| %>
+          <%= text_field_tag :name, @device.name, required: true, maxlength: 50, "aria-label": "Device name", class: "input" %>
+          <%= form.button "Save", class: "button" %>
+        <% end %>
+      <% else %>
+        <p class="text-xl font-semibold"><%= @device.name %></p>
+      <% end %>
+      <p class="muted">
+        <%= @device.shared? ? "Shared device" : "#{@device.member.name}'s device" %> · <%= last_seen(@device) %>
+        <%= " · this device" if @device == Current.device %>
+      </p>
+    </div>
+
+    <% if @device.shared? %>
+      <p class="mt-8 text-sm text-stone-600 dark:text-stone-400">
+        Everyone in the household uses this device. It shows up as “<%= @device.name %>” in the history.
+        It can't invite, remove anyone or change Household settings.
+      </p>
+    <% end %>
+
+    <% if Current.member && @device != Current.device %>
+      <div class="pt-8">
+        <%= button_to "Remove device", device_path(@device), method: :delete, class: "button-danger",
+              form: { data: { turbo_confirm: "Remove #{@device.name}? It has to join again with an invite." } } %>
+      </div>
+    <% end %>
+  </div>
+</div>

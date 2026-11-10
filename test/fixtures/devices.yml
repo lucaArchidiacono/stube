@@ -1,0 +1,26 @@
+# Each device's raw token is its fixture name, so tests can sign_in_as(:luca_mac).
+<% token_digest = ->(name) { Digest::SHA256.hexdigest(name.to_s) } %>
+
+luca_mac:
+  household: ours
+  member: luca
+  name: Safari on Mac
+  token_digest: <%= token_digest.(:luca_mac) %>
+  last_seen_on: <%= Date.yesterday %>
+
+luca_iphone:
+  household: ours
+  member: luca
+  name: Safari on iPhone
+  token_digest: <%= token_digest.(:luca_iphone) %>
+
+anna_iphone:
+  household: ours
+  member: anna
+  name: Safari on iPhone
+  token_digest: <%= token_digest.(:anna_iphone) %>
+
+kitchen:
+  household: ours
+  name: Kitchen iPad
+  token_digest: <%= token_digest.(:kitchen) %>
